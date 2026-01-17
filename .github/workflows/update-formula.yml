@@ -1,0 +1,27 @@
+name: Update Formula
+  on:
+    repository_dispatch:
+      types: [rooms-release]
+  jobs:
+    update:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v6.0.1
+
+        - name: Update rooms formula
+          run: |
+            VERSION="${{ github.event.client_payload.version }}"
+            TARBALL_URL="${{ github.event.client_payload.tarball_url }}"
+            SHA256=$(curl -sL "$TARBALL_URL" | shasum -a 256 | cut -d' ' -f1)
+
+            # Update Formula/rooms.rb with new version and sha256
+            sed -i "s/version \".*\"/version \"$VERSION\"/" Formula/rooms.rb
+            sed -i "s/sha256 \".*\"/sha256 \"$SHA256\"/" Formula/rooms.rb
+
+        - name: Commit and push
+          run: |
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add Formula/rooms.rb
+            git commit -m "rooms ${{ github.event.client_payload.version }}"
+            git push
