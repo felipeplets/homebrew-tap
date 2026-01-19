@@ -29,8 +29,6 @@ jobs:
 
       - name: Commit and push
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add Formula/rooms.rb
           git commit -m "rooms ${{ github.event.client_payload.version }}"
           git push
