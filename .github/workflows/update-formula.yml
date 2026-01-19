@@ -1,5 +1,14 @@
 name: Update Formula
 on:
+  workflow_dispatch:
+    inputs:
+      version: 
+        required: true
+        type: string
+        description: release version
+      tarball_url:
+        required: true
+        type: string
   repository_dispatch:
     types: [rooms-release]
 jobs:
@@ -10,8 +19,8 @@ jobs:
 
       - name: Update rooms formula
         run: |
-          VERSION="${{ github.event.client_payload.version }}"
-          TARBALL_URL="${{ github.event.client_payload.tarball_url }}"
+          VERSION="${{ inputs.version || github.event.client_payload.version }}"
+          TARBALL_URL="${{ inputs.tarball_url || github.event.client_payload.tarball_url }}"
           SHA256=$(curl -sL "$TARBALL_URL" | shasum -a 256 | cut -d' ' -f1)
 
           # Update Formula/rooms.rb with new version and sha256
