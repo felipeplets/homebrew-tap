@@ -11,6 +11,8 @@ on:
         type: string
   repository_dispatch:
     types: [rooms-release]
+permissions:
+  contents: write
 jobs:
   update:
     runs-on: ubuntu-latest
