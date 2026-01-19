@@ -2,7 +2,7 @@ class Rooms < Formula
   desc "Terminal UI to manage Git worktrees"
   homepage "https://github.com/felipeplets/rooms"
   url "https://github.com/felipeplets/rooms/archive/refs/tags/v0.0.1.tar.gz"
-  sha256 "351f040713695405c7ea581c4061218b000009bbfafaa530950604468f1b383d"
+  sha256 "a5ac622885490a590193339053a7d1521217fbbb825ee7f5f84c868731de892d"
   license "MIT"
 
   depends_on "rust" => :build
