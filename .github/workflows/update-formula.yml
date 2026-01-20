@@ -6,9 +6,6 @@ on:
         required: true
         type: string
         description: release version
-      tarball_url:
-        required: true
-        type: string
   repository_dispatch:
     types: [rooms-release]
 permissions:
@@ -22,11 +19,12 @@ jobs:
       - name: Update rooms formula
         run: |
           VERSION="${{ inputs.version || github.event.client_payload.version }}"
-          TARBALL_URL="${{ inputs.tarball_url || github.event.client_payload.tarball_url }}"
+          TARBALL_URL="https://github.com/felipeplets/rooms/archive/refs/tags/v${VERSION}.tar.gz"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           SHA256=$(curl -sL "$TARBALL_URL" | shasum -a 256 | cut -d' ' -f1)
 
-          # Update Formula/rooms.rb with new version and sha256
-          sed -i "s/version \".*\"/version \"$VERSION\"/" Formula/rooms.rb
+          # Update Formula/rooms.rb with new url and sha256
+          sed -i "s|url \".*\"|url \"$TARBALL_URL\"|" Formula/rooms.rb
           sed -i "s/sha256 \".*\"/sha256 \"$SHA256\"/" Formula/rooms.rb
 
       - name: Commit and push
@@ -34,5 +32,6 @@ jobs:
           git config --global user.email "fsplets@gmail.com"
           git config --global user.name "Felipe Plets"
           git add Formula/rooms.rb
-          git commit -m "rooms ${{ github.event.client_payload.version }}"
+          git commit -m "rooms v${VERSION}"
+          git tag -a "v${VERSION}" -m "rooms v${VERSION}"
           git push
